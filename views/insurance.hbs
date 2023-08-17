@@ -1,0 +1,245 @@
+<!-- 
+
+Brynn DeVaan and Emma Skillen
+
+CS 340
+
+Code Citation:
+Date: 8/14/23
+Cited from nodejs-starter-app from GitHub osu-cs340-ecampus
+https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main/Step%205%20-%20Adding%20New%20Data
+With the exception of original work on adding confirmation and error messages in the script.
+
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/mystyle.css">
+    <title>Private Practice</title>
+</head>
+<body>
+    <nav>
+        <a href=/>Home</a>
+        <a href="patients.hbs">Patients</a>
+        <a href="staff.hbs">Staff</a>
+        <a href="insurance.hbs">Insurance</a>
+        <a href="codes.hbs">CPT Codes</a>
+        <a href="appointment.hbs">Appointments</a>
+        <a href="appointment-codes.hbs">Appointment Codes</a>
+    </nav>
+    <h1>Insurance</h1>
+    <!--Main Display Table-->
+    <div id="select" style="display:block;">
+        <p>
+            This is a list of patient insurance plan information. Insurances
+            can change every year, and patients often have new insurances with new jobs. 
+            Due to the constant changing, it is important to be accessible in it's own table.
+        </p>
+        <!-- Insurance Table -->
+        <!-- Code Citation  -->
+        <!-- Date: 7/31/23  -->
+        <!-- Taken from nodejs-starter-app from github  -->
+        <!--  https://github.com/osu-cs340-ecampus/nodejs-starter-app/blob/main/Step%204%20-%20Dynamically%20Displaying%20Data/README.md -->
+        <table id="insuranceTable">
+            <!--headers-->
+            <thead>
+                <tr>
+                    <th>Insurance ID</th>
+                    <th>Organization Name</th>
+                    <th>Member ID</th>
+                    <th>Group Number</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each data}}
+                <tr>
+                    <td>{{this.id_insurance}}</td>
+                    <td>{{this.org_name}}</td>
+                    <td>{{this.member_id}}</td>
+                    <td>{{this.group_number}}</td>
+                    <td><button onclick="deleteInsurance({{this.id_insurance}})">Delete</button></td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+    <script src="./js/delete_insurance.js"></script>
+    <p>&nbsp;</p>
+
+    <!-- Searching Insurances -->
+    <div id="search" style="display:block;">
+        <form method="GET" id="searchInsuranceForm">
+            <legend>
+                <strong>Search Insurances</strong>
+            </legend>
+            <p>
+                Search any organization name or letter and the matching data will be displayed.
+            </p>
+            <label for="input-search">Search</label>
+            <input type="text" name="insurance_search" id="input-insurance-search">
+            <input class="button" type="submit">
+            <a href='/insurance.hbs'><button>Reset</button></a>
+        </form>
+    </div>
+    <p>&nbsp;</p>
+
+    <!-- Adding Primary Insurance -->
+    <div id="insert" style="display:block;">
+        <!-- Form for adding primary insurance information -->
+        <form id="add-insurance-form" method="POST" action="/add-insurance-form">
+            <legend>
+                <strong>Add Primary Insurance</strong>
+            </legend>
+            <p>
+                Enter the patient's insurance information below. If the insurance organization
+                name does not exist in the drop-down selection menu, then unfortunately we do not
+                currently accept that insurance. In the instance that an insurance company does not
+                utilize group numbers, that field can be left blank.
+            </p>
+            <fieldset class="formfields">
+                <!-- Dropdown for selecting insurance organization name -->
+                <label>Organization Name</label>
+                <select name="insurance-name" id="insurance-name">
+                    <option value="selectOrgName">Select an Insurance Company</option>
+                    <option value="Regence">Regence</option>
+                    <option value="UnitedHealthcare">UnitedHealthcare</option>
+                    <option value="Aetna">Aetna</option>
+                    <option value="Kaiser Permanente">Kaiser Permanente</option>
+                </select>
+
+                <!-- Input field for member ID -->
+                <label>Member ID</label>
+                <input type="text" name="member-ID">
+
+                <!-- Input field for group number -->
+                <label>Group Number</label>
+                <input type="text" name="add-group-number">
+            </fieldset>
+
+            <!-- Submit button for saving insurance information -->
+            <input class="button" type="submit" id="saveInsurance" value="Save Insurance">
+
+            <!-- Error message display for insurance form -->
+            <div id="error-message-insurance" style="display: none; color: red;"></div>
+        </form>
+    </div>
+    <p>&nbsp;</p>
+
+    <!-- Updating Primary Insurance -->
+    <div id="update" style="display:block;">
+        <!-- Form for updating primary insurance information -->
+        <form method="POST" id="updateInsuranceForm" action="/update-insurance">
+            <legend>
+                <strong>Edit Primary Insurance</strong>
+            </legend>
+            <p>
+                Edit the selected insurance below. Similar to adding a primary insurance, 
+                you may omit the group number if applicable.
+            </p>
+            <fieldset class="formfields">
+                <!-- Dropdown for selecting insurance ID -->
+                <label>Insurance ID</label>
+                <select name="insurance-id" id="insuranceID" required>
+                    <option value="selectInsurance">Select an insurance</option>
+                    {{#each data}}
+                        <option value="{{this.id_insurance}}" data-orgname="{{this.org_name}}" data-memberid="{{this.member_id}}" data-groupnumber="{{this.group_number}}">{{this.id_insurance}} - {{this.org_name}}</option>
+                    {{/each}}
+                </select>
+                
+                <!-- Dropdown for selecting organization name -->
+                <label>Organization Name</label>
+                <select name="org-name" id="orgName" required>
+                    <option value="selectOrgName">Select an Insurance Company</option>
+                    <option value="Regence">Regence</option>
+                    <option value="UnitedHealthcare">UnitedHealthcare</option>
+                    <option value="Aetna">Aetna</option>
+                    <option value="Kaiser Permanente">Kaiser Permanente</option>
+                </select> 
+                
+                <!-- Input field for member ID -->
+                <label>Member ID</label>
+                <input type="text" name="member-id" required>
+                
+                <!-- Input field for group number -->
+                <label>Group Number</label>
+                <input type="text" name="group-number-update">
+            </fieldset>
+            
+            <!-- Submit button for updating insurance information -->
+            <input class="button" type="submit" id="updateInsurance" value="Update Insurance">
+            
+            <!-- Error message display for updating insurance form -->
+            <span id="error-message-update-insurance" style="color: red;"></span>
+        </form>
+        
+        <!-- Error message display for updating insurance form (hidden by default) -->
+        <div id="error-message-update-insurance" style="display: none; color: red;"></div>
+    </div>
+    <!-- Script for handling updating insurance information -->
+    <script src="./js/update_insurance.js"></script>
+    <p>&nbsp;</p>
+
+    <script>
+    // Add event listener to the "Add Insurance" form for error handling
+    document.getElementById('add-insurance-form').addEventListener('submit', function(event) {
+        // Retrieve values from form inputs
+        var orgName = document.getElementById('insurance-name').value;
+        var memberID = document.getElementsByName('member-ID')[0].value;
+
+        // Check if organization name is not selected or member ID is missing
+        if (orgName === 'selectOrgName' || !memberID) {
+            event.preventDefault(); // Prevent form submission
+
+            // Display an error message
+            var errorMessage = "Please select an organization name and provide a member ID.";
+            document.getElementById('error-message-insurance').textContent = errorMessage;
+            document.getElementById('error-message-insurance').style.display = 'inline'; // Display below the button
+        }
+    });
+    </script>
+
+    <script>
+    // Error message for update insurance
+    document.getElementById('updateInsurance').addEventListener('click', function(event) {
+        var insuranceID = document.getElementById('insuranceID').value;
+        var orgName = document.getElementById('orgName').value;
+        var memberID = document.getElementsByName('member-id')[0].value;
+
+        if (insuranceID === 'selectInsurance' || orgName === 'selectOrgName' || !memberID) {
+            event.preventDefault(); // Prevent form submission
+            var errorMessage = "Please select an insurance, an organization name, and provide a member ID.";
+            document.getElementById('error-message-update-insurance').textContent = errorMessage;
+        }
+    });
+    </script>
+
+    <script>
+        // Function to autofill based on dropdown menu selection
+        document.getElementById('insuranceID').addEventListener('change', function(event) {
+            var selectedOption = event.target.options[event.target.selectedIndex];
+
+            if (selectedOption.value !== 'selectInsurance') {
+                // Extract data attributes from the selected option
+                var orgName = selectedOption.getAttribute('data-orgname');
+                var memberID = selectedOption.getAttribute('data-memberid');
+                var groupNumber = selectedOption.getAttribute('data-groupnumber');
+
+                // Populate the form fields with the extracted data
+                document.getElementById('orgName').value = orgName;
+                document.getElementsByName('member-id')[0].value = memberID;
+                document.getElementsByName('group-number-update')[0].value = groupNumber;
+            } else {
+                // Clear form fields if "Select an insurance" is chosen
+                document.getElementById('orgName').value = 'selectOrgName';
+                document.getElementsByName('member-id')[0].value = '';
+                document.getElementsByName('group-number-update')[0].value = '';
+            }
+        });
+    </script>
+</body>
+</html>

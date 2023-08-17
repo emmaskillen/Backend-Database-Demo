@@ -1,0 +1,99 @@
+/*    
+CS340 Project
+Brynn DeVaan and Emma Skillen
+*/
+
+:root{
+    --light-grey:#ececec; 
+    --mint:#9fd3c7;
+    --mid-blue:#385170;
+    --dark-blue: #142d4c; 
+    --purple:#524a79;
+}
+
+main {
+    color: white;
+    background-color: var(--dark-blue);
+}
+
+nav a {
+    background-color:rgb(192, 216, 238);
+    color: var(--dark-blue);
+    border-radius: 5px 5px 5px 5px; 
+    font-size: 20px;
+    margin:2px;
+    padding: 5px 10px 5px 10px;
+    text-decoration: initial;
+}
+nav a:hover {
+    background-color:rgb(29, 49, 87);
+    color:rgb(192, 216, 238);
+}
+body {
+    background-color: white;
+    color:var(--dark-blue);
+    font-family: sans-serif;
+    top: 20px;
+    padding: 5px 10px 5px 10px;
+    overflow: scroll;
+}
+
+/* ----------------------- Table Styles ----------------------------- */
+table {
+    border-collapse: collapse; 
+    border-spacing: 1;
+    background: white; 
+    border-radius: 6px 6px 6px 6px;
+    width: 85%; 
+    font-size: 1em;
+    margin: 0 auto; 
+}
+
+/* headers */
+tr th {
+    background:rgb(29, 49, 87);
+    font-size: 14px; 
+    color: white; 
+    text-align: center; 
+
+}
+
+tr:nth-child(odd) {background-color:gainsboro}
+
+td {
+    text-align: left; 
+}
+
+td, th {
+    padding-left: 8px;
+}
+
+/* hover over table */
+tr:hover {background-color: lightblue}; 
+
+/* footer design  */  
+.footer {
+    background-color:var(--dark-blue);
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+footer {
+    background-color:var(--dark-blue);
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    color: white;
+    text-align: center;
+    padding: 0.3%;
+    border-radius: 5px 5px 5px 5px;
+}
+
+fieldset, 
+fieldset legend,
+fieldset label,
+fieldset input{
+  margin: 0;
+  padding: 0.3%;
+}

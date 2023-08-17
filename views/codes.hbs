@@ -1,0 +1,189 @@
+<!-- 
+
+Brynn DeVaan and Emma Skillen
+
+CS 340
+
+Code Citation:
+Date: 8/14/23
+Cited from nodejs-starter-app from GitHub osu-cs340-ecampus
+https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main/Step%205%20-%20Adding%20New%20Data
+With the exception of original work on adding confirmation and error messages in the script.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/mystyle.css">
+    <title>Document</title>
+</head>
+<body>
+    <nav>
+        <a href=/>Home</a>
+        <a href="patients.hbs">Patients</a>
+        <a href="staff.hbs">Staff</a>
+        <a href="insurance.hbs">Insurance</a>
+        <a href="codes.hbs">CPT Codes</a>
+        <a href="appointment.hbs">Appointments</a>
+        <a href="appointment-codes.hbs">Appointment Codes</a>
+    </nav>
+    <h1>CPT Codes</h1>
+    <!--Main Display Table-->
+    <div id="select" style="display:block;">
+        <p>
+            This is the record of all CPT codes that are used at this clinic.
+            CPT codes are procedure codes that determine what was done during an
+            appointment. Each CPT code has it's own fee that can be billed to insurances
+            and patients. 
+        </p>
+        <!-- CPT Codes Table -->
+        <!-- Code Citation  -->
+        <!-- Date: 7/31/23  -->
+        <!-- Taken from nodejs-starter-app from github  -->
+        <!--  https://github.com/osu-cs340-ecampus/nodejs-starter-app/blob/main/Step%204%20-%20Dynamically%20Displaying%20Data/README.md -->
+        <table  id="codesTable">
+            <!--headers-->
+            <thead>
+                <tr>
+                    <th>CPT Code ID</th>
+                    <th>CPT Code</th>
+                    <th>Description</th>
+                    <th>Cost of Procedure</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each data}}
+                <tr data-codes="{{this.id_code}}">
+                    <td>{{this.id_code}}</td>
+                    <td>{{this.cpt_code}}</td>
+                    <td>{{this.description}}</td>
+                    <td>{{formatCurrency this.initial_fee}}</td>
+                    <td><button onclick="deleteCode({{this.id_code}})">Delete</button></td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+    <script src="./js/delete_code.js"></script>
+    <p>&nbsp;</p>
+
+     <!-- Searching Code -->
+    <div id="search" style="display:block;">
+        <form method="GET" id="searchCodesForm">
+            <legend>
+                <strong>Search CPT Codes</strong>
+            </legend>
+            <p>
+                Search any description of a procedure, and the matching code will be displayed above.
+            </p>
+            <label for="input-description">Search Procedure Description</label>
+            <input type="text" name="description_search" id="input-description-html-search">
+            <input class="button" type="submit">
+            <a href='/codes.hbs'><button>Reset</button></a>
+        </form>
+    </div>
+    <p>&nbsp;</p>
+
+    <!-- Adding Code -->
+    <div id="insert" style="display:block;">
+        <!-- Form for adding a new CPT code to the database -->
+        <form id="add-code-form" method="POST" action="/add-code-form">
+            <legend>
+                <strong>Add CPT Code</strong>
+            </legend>
+            <p>
+                You can add a new CPT code to the database here. This record
+                is used by both providers and the billing team.
+            </p>
+            <fieldset class="formfields">
+                <!-- Input field for CPT code -->
+                <label for="input-cpt-code">CPT Code</label>
+                <input type="text" name="input-cpt-code" id="input-cpt-code">
+
+                <!-- Input field for code description -->
+                <label for="input-code-description">Description</label>
+                <input type="text" name="input-code-description" id="input-code-description">
+
+                <!-- Input field for procedure/test fee -->
+                <label for="input-fee">Procedure/Test Fee</label>
+                <input type="number" min="1" step="any" id="input-fee" name="input-fee"/>
+            </fieldset>
+
+            <!-- Submit button for adding the new CPT code -->
+            <input class="button" type="submit" id="createCode" value="Save Code">
+        </form>
+    </div>
+    <p>&nbsp;</p>
+
+    <!-- Updating CPT Code -->
+    <div id="update" style="display:block;">
+        <!-- Form for updating an existing CPT code using AJAX -->
+        <form id="update-code-form-ajax">
+            <legend>
+                <strong>Edit CPT Code</strong>
+            </legend>
+            <p>
+                Update a CPT code here. Make sure to save your changes.
+            </p>
+            <fieldset class="formfields">
+                <!-- Select existing CPT code -->
+                <label for="input-id-code-update">CPT Code</label>
+                <select name="input-id-code-update" id="mySelectCode">
+                    <option value="code">Select an Existing Code</option>
+                    {{#each data}}
+                    <option value="{{this.id_code}}" data-code="{{this.id_code}}" data-cpt="{{this.cpt_code}}"
+                        data-description="{{this.description}}" data-fee="{{this.initial_fee}}">
+                        {{this.id_code}} -- {{this.cpt_code}}
+                    </option>
+                    {{/each}}
+                </select>
+
+                <!-- Update fields for CPT code -->
+                <label for="input-cpt-code-update">CPT Code</label>
+                <input type="text" name="input-cpt-code-update" id="input-cpt-code-update">
+                <label for="input-description-update">Description</label>
+                <input type="text" name="input-description-update" id="input-description-update"/>
+                <label for="input-initial-fee-update">Procedure Cost</label>
+                <input type="number" min="1" step="any" name="input-initial-fee-update" id="input-initial-fee-update"/>
+            </fieldset>
+
+            <!-- Submit button for updating the CPT code -->
+            <input class="button" type="submit" id="UpdateCode" value="Update Code">
+        </form>
+    </div>
+
+    <!-- Script to handle AJAX request for updating CPT code -->
+    <script src="./js/update_code.js"></script>
+    <p>&nbsp;</p>
+    
+    <!-- Autofill update menu after ID selected -->
+    <script>
+    document.getElementById('mySelectCode').addEventListener('change', function(event) {
+        var selectedOption = event.target.options[event.target.selectedIndex];
+
+        if (selectedOption.value !== 'code') {
+            // Extract data attributes from the selected option
+            var cpt = selectedOption.getAttribute('data-cpt');
+            var description = selectedOption.getAttribute('data-description');
+            var fee = selectedOption.getAttribute('data-fee');
+
+            // Populate the form fields with the extracted data
+            document.getElementById('input-cpt-code-update').value = cpt;
+            document.getElementById('input-description-update').value = description;
+            document.getElementById('input-initial-fee-update').value = fee;
+        } else {
+            // Clear form fields if "Select a cpt code is chosen
+            document.getElementById('input-cpt-code-update').value = '';
+            document.getElementById('input-description-update').value = '';
+            document.getElementById('input-initial-fee-update').value = '';
+        }
+    });
+    </script>
+
+</body>
+</html>
+

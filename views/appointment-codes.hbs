@@ -1,0 +1,175 @@
+<!-- 
+
+Brynn DeVaan and Emma Skillen
+
+CS 340
+
+Code Citation:
+Date: 8/14/23
+Cited from nodejs-starter-app from GitHub osu-cs340-ecampus
+https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main/Step%205%20-%20Adding%20New%20Data
+With the exception of original work on adding confirmation and error messages in the script.
+And with the exception of using mdn web docs as a reference towards displaying dates in the script.
+
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/mystyle.css">
+    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>-->
+    <title>Document</title>
+</head>
+<body>
+    <nav>
+        <a href=/>Home</a>
+        <a href="patients.hbs">Patients</a>
+        <a href="staff.hbs">Staff</a>
+        <a href="insurance.hbs">Insurance</a>
+        <a href="codes.hbs">CPT Codes</a>
+        <a href="appointment.hbs">Appointments</a>
+        <a href="appointment-codes.hbs">Appointment Codes</a>
+    </nav>
+    <h1>CPT Code and Appointment Record</h1>
+    <!--Main Display Table-->
+    <div id="select" style="display:block;" >
+        <p>
+            This table represents the M:M relationship between appointments and CPT codes. 
+            Each appointment needs to be billed differently depending on the CPT codes involved. 
+            The billing staff would use this information to properly bill both patients and insurances.
+        </p>
+        <!-- Intersection Table -->
+        <!-- Code Citation  -->
+        <!-- Date: 7/31/23  -->
+        <!-- Taken from nodejs-starter-app from github  -->
+        <!--  https://github.com/osu-cs340-ecampus/nodejs-starter-app/blob/main/Step%204%20-%20Dynamically%20Displaying%20Data/README.md -->
+        <table id="appointment-codes">
+            <!--headers-->
+            <thead>
+                <tr>
+                <th>Appointment ID</th>
+                <th>Appointment Date</th>
+                <th>Appointment Time</th>
+                <th>CPT Code ID</th>
+                <th>Patient</th>
+                <th>Delete</th>
+            </tr>
+            <tbody>
+                {{#each appointmentCodes}}
+                <tr data-appt="{{this.id_appointment}}">
+                    <td>{{this.id_appointment}}</td>
+                    <td>{{formatDate this.appointment_date}}</td>
+                    <td>{{this.appointment_time}}</td>
+                    <td>{{this.id_code}}</td>
+                    <td>{{this.first_name}} {{this.last_name}}</td>
+                    <td><button onclick="deleteAppointmentCode('{{this.id_appointment}}')">Delete</button></td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Delete Appointment-->
+    <script src="./js/delete_appointment_code.js"></script>
+    <p>&nbsp;</p>
+
+    <!-- Searching appointment-codes -->
+    <div id="search" style="display:block;">
+        <!-- Form for searching appointment codes by patient's last name -->
+        <form method="GET" id="search-appointment-codes-html" action='/appointment-codes.hbs'>
+            <legend>
+                <strong>Search For Codes Used at an Appointment</strong>
+            </legend>
+            <p>
+                Search for Codes Billed to a Patient:
+            </p>
+            <!-- Input for searching by patient's last name -->
+            <label for="input-appointment-codes-id">Patient Last Name</label>
+            <input type="text" name="appointment_codes_search" id="input-appointment-codes-search">
+            
+            <!-- Submit button for searching -->
+            <input class="button" type="submit">
+            
+            <!-- Reset button to clear search filters -->
+            <a href='/appointment-codes.hbs'><button>Reset</button></a>
+        </form>
+    </div>
+    <p>&nbsp;</p>
+
+    <!-- Adding Appointment Code -->
+    <div>
+        <!-- Heading and description for adding a new CPT code to an existing appointment -->
+        <legend><strong>Add CPT Code to an Existing Appointment</strong></legend>
+        <p>To add a new CPT code to an existing appointment, click the submit button below.</p>
+        
+        <!-- Form for adding a new CPT code to an existing appointment -->
+        <form id="add-appointment-code-form" method="POST" action="/add-appointment-code-form">
+            <!-- Option 1: Select appointment -->
+            <fieldset class="formfields">
+                <label for="select-appointment">Appointment ID</label>
+                <select name="input-appointment-code-appt" id="input-appointment-code-appt">
+                    <option value="select-appointment-id" name="select-appointment-id" >Select a Past Appointment</option>
+                    {{#each appointmentCodes}}
+                        <option value="{{this.id_appointment}}">{{formatDate this.appointment_date}} at {{this.appointment_time}}</option>
+                    {{/each}}
+                </select>
+                
+                <!-- Option 2: Select CPT code -->
+                <label for="select-code">CPT Code ID</label>
+                <select name="input-appointment-code-code" id="input-appointment-code-code">
+                    <option value="select-code-id" name="select-code-id">Select a CPT Code</option>
+                    {{#each codes}}
+                        <option value="{{this.id_code}}"> {{this.cpt_code}} - {{this.description}}</option>
+                    {{/each}}
+                </select>
+            </fieldset>
+            
+            <!-- Submit button for adding the CPT code to the appointment -->
+            <input class="button" type="submit">
+        </form>
+    </div>
+    <p>&nbsp;</p>
+
+    <!-- Script to handle AJAX request for updating appointment code -->
+    <script src="./js/update_appointment_code.js"></script>
+    <p>&nbsp;</p>
+
+    <!-- Code Citation  -->
+    <!-- Date: 8/14/23  -->
+    <!-- Taken from mdn web docs  -->
+    <!-- Source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString -->
+    
+    <!-- Format date and update displayed value --> 
+    <script>
+    const apptDateElements = document.querySelectorAll('.apptDate');
+    apptDateElements.forEach(element => {
+        const originalDate = element.textContent;
+        const formattedDate = new Date(originalDate).toLocaleDateString('en-US');
+        element.textContent = formattedDate;
+    });
+    </script>
+
+    <!-- Autofill update menu after ID selected - original work -->
+    <script>
+    document.getElementById('input-appointment-code-appt').addEventListener('change', function(event) {
+        var selectedOption = event.target.options[event.target.selectedIndex];
+
+        if (selectedOption.value !== 'select-appointment-id') {
+            // Extract data attributes from the selected option
+            var id_code = selectedOption.getAttribute('data-id-code');
+
+            // Populate the form fields with the extracted data
+            document.getElementById('new-select-code').value = id_code;
+        
+        } else {
+            // Clear form fields if "Select a cpt code is chosen
+            document.getElementById('new-select-code').value = '';
+        }
+    });
+    </script>
+
+</body>
+</html>

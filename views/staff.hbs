@@ -1,0 +1,210 @@
+<!-- 
+
+Brynn DeVaan and Emma Skillen
+
+CS 340
+
+Code Citation:
+Date: 8/14/23
+Cited from nodejs-starter-app from GitHub osu-cs340-ecampus
+https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main/Step%205%20-%20Adding%20New%20Data
+With the exception of original work on adding confirmation and error messages in the script.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Practice</title>
+    <link rel="stylesheet" type="text/css" href="css/mystyle.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <a href="/">Home</a>
+        <a href="patients.hbs">Patients</a>
+        <a href="staff.hbs">Staff</a>
+        <a href="insurance.hbs">Insurance</a>
+        <a href="codes.hbs">CPT Codes</a>
+        <a href="appointment.hbs">Appointments</a>
+        <a href="appointment-codes.hbs">Appointment Codes</a>
+    </nav>
+    <h1>Staff</h1>
+    <!-- Main Display Table -->
+    <div>
+        <p>
+            This is a list of our current providers. Providers
+            are required to include their basic demographics.
+        </p>
+        <!-- Table of Staff Data -->
+        <!-- Code Citation  -->
+        <!-- Date: 7/31/23  -->
+        <!-- Taken from nodejs-starter-app from github  -->
+        <!--  https://github.com/osu-cs340-ecampus/nodejs-starter-app/blob/main/Step%204%20-%20Dynamically%20Displaying%20Data/README.md -->
+        <table id="staff-table">
+            <!-- Header section -->
+            <thead>
+                <tr>
+                    <th>Provider ID</th>
+                    <th>Last Name</th>
+                    <th>First Name</th>
+                    <th>Phone Number</th>
+                    <th>Email</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <!-- Body section -->
+            <tbody>
+                <!-- Loop through staff data -->
+                {{#each data}}
+                <tr>
+                    <td>{{this.id_staff}}</td>
+                    <td>{{this.last_name}}</td>
+                    <td>{{this.first_name}}</td>
+                    <td>{{this.phone_number}}</td>
+                    <td>{{this.email}}</td>
+                    <td><button onclick="deleteStaff({{this.id_staff}})">Delete</button></td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        <!-- JavaScript for staff deletion -->
+        <script src="./js/delete_staff.js"></script>
+    </div>
+    <p>&nbsp;</p>
+    <!-- Searching Staff -->
+    <div id="search" style="display:block;">
+        <form method="GET" id="searchStaffForm">
+            <legend>
+                <strong>Search Staff</strong>
+            </legend>
+            <p>
+                Search any last name and the matching data will be displayed.
+            </p>
+            <label for="input-last-name">Search Last Name</label>
+            <input type="text" name="last_name_search" id="input-last-name-html-search">
+            <input class="button" type="submit">
+            <a href='/staff.hbs'><button>Reset</button></a>
+        </form>
+    </div>
+    <p>&nbsp;</p>
+    <!-- Adding Staff -->
+    <div id="insert" style="display:block;">
+        <form method="POST" id="addStaff" action="/add-staff">
+            <legend>
+                <strong>Add Staff</strong>
+            </legend>
+            <p>
+                Fill this form out to add a new provider to our office. Once
+                a provider is registered, they can then be assigned appointments.
+            </p>
+            <fieldset class="formfields">
+                <label>Last Name</label>
+                <input type="text" name="last_name">
+                <label>First Name</label>
+                <input type="text" name="first_name">
+                <label>Phone</label>
+                <input type="tel" name="phone">
+                <label>Email</label>
+                <input type="text" name="email">
+            </fieldset>
+            <input class="button" type="submit" id="saveStaff" value="Save Staff">
+            <div id="error-message" style="display: none; color: red;"></div>
+        </form>
+    </div>
+    <p>&nbsp;</p>
+    <!-- Updating Staff -->
+    <div id="update" style="display:block;">
+        <form id="update-staff-form-ajax">
+            <legend>
+                <strong>Edit Staff</strong>
+            </legend>
+            <p>
+                Update a current provider's information below.
+            </p>
+            <fieldset class="formfields">
+                <label for="input-staff">Staff ID</label>
+                <select name="input-staff" id="mySelect">
+                    <option value="selectStaff">Select a staff member</option>
+                    <!-- Loop through staff data -->
+                    {{#each data}}
+                    <option value="{{this.id_staff}}" data-lastname="{{this.last_name}}" data-firstname="{{this.first_name}}" data-phone="{{this.phone_number}}" data-email="{{this.email}}">{{this.id_staff}} - {{this.last_name}}, {{this.first_name}}</option>
+                    {{/each}}
+                </select>
+                <label>Last Name</label>
+                <input type="text" name="input-last_name" id="input-last-name-update">
+                <label>First Name</label>
+                <input type="text" name="input-first_name" id="input-first-name-update">
+                <label>Phone</label>
+                <input type="tel" name="input-phone" id="input-phone-update">
+                <label>Email</label>
+                <input type="text" name="input-email" id="input-email-update">
+            </fieldset>
+            <!-- Container for the error message and button -->
+            <div style="display: inline-block;">
+                <input class="button" type="submit" id="updateStaff" value="Update Staff">
+                <div id="error-message-update" style="display: none; color: red;"></div>
+            </div>
+        </form>
+        <!-- JavaScript for staff update -->
+        <script src="./js/update_staff.js"></script>
+    </div>
+    <p>&nbsp;</p>
+    <!-- JavaScript to display error message for Add Staff - original work -->
+    <script>
+        document.getElementById('addStaff').addEventListener('submit', function(event) {
+            var lastName = document.getElementsByName('last_name')[0].value;
+            var firstName = document.getElementsByName('first_name')[0].value;
+            var phone = document.getElementsByName('phone')[0].value;
+            var email = document.getElementsByName('email')[0].value;
+
+            if (!lastName || !firstName || !phone || !email) {
+                event.preventDefault();
+                var errorMessage = "All fields are required.";
+                document.getElementById('error-message').textContent = errorMessage;
+                document.getElementById('error-message').style.display = 'inline';
+            }
+        });
+    </script>
+    <!-- JavaScript to display error message for Update Staff - original work -->
+    <script>
+        document.getElementById('updateStaff').addEventListener('click', function(event) {
+            var lastName = document.getElementById('input-last-name-update').value;
+            var firstName = document.getElementById('input-first-name-update').value;
+            var phone = document.getElementById('input-phone-update').value;
+            var email = document.getElementById('input-email-update').value;
+
+            if (!lastName || !firstName || !phone || !email) {
+                event.preventDefault();
+                var errorMessage = "All fields are required.";
+                document.getElementById('error-message-update').textContent = errorMessage;
+                document.getElementById('error-message-update').style.display = 'inline';
+            }
+        });
+    </script>
+    <!-- JavaScript for autofilling based on dropdown selection - original work -->
+    <script>
+        document.getElementById('mySelect').addEventListener('change', function(event) {
+            var selectedOption = event.target.options[event.target.selectedIndex];
+
+            if (selectedOption.value !== 'selectStaff') {
+                var lastName = selectedOption.getAttribute('data-lastname');
+                var firstName = selectedOption.getAttribute('data-firstname');
+                var phone = selectedOption.getAttribute('data-phone');
+                var email = selectedOption.getAttribute('data-email');
+
+                document.getElementById('input-last-name-update').value = lastName;
+                document.getElementById('input-first-name-update').value = firstName;
+                document.getElementById('input-phone-update').value = phone;
+                document.getElementById('input-email-update').value = email;
+            } else {
+                document.getElementById('input-last-name-update').value = '';
+                document.getElementById('input-first-name-update').value = '';
+                document.getElementById('input-phone-update').value = '';
+                document.getElementById('input-email-update').value = '';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!-- 
+
+Brynn DeVaan and Emma Skillen
+
+CS 340
+
+Code Citation:
+Date: 8/14/23
+Cited from nodejs-starter-app from GitHub osu-cs340-ecampus
+https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main/Step%205%20-%20Adding%20New%20Data
+With the exception of original work on adding confirmation and error messages in the script.
+And with the exception of using mdn web docs as a reference towards displaying dates in the script.
+
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/mystyle.css">
+</head>
+<body>
+    <nav>
+        <a href=/>Home</a>
+        <a href="patients.hbs">Patients</a>
+        <a href="staff.hbs">Staff</a>
+        <a href="insurance.hbs">Insurance</a>
+        <a href="codes.hbs">CPT Codes</a>
+        <a href="appointment.hbs">Appointments</a>
+        <a href="appointment-codes.hbs">Appointment Codes</a>
+    </nav>
+    <h1>Patients</h1>
+    <!--Main Display Table-->
+    <div id="select" style="display:block;">
+        <p>
+            This is our current active patient's list. The basic demographics are tied
+            to each patient chart so that patients can be properly contacted, scheduled,
+            and billed. 
+        </p>
+        <!-- Table of patient data -->
+        <!-- Code Citation  -->
+        <!-- Date: 7/31/23  -->
+        <!-- Taken from nodejs-starter-app from github  -->
+        <!--  https://github.com/osu-cs340-ecampus/nodejs-starter-app/blob/main/Step%204%20-%20Dynamically%20Displaying%20Data/README.md -->
+        <table id="patient-table">
+            <thead>
+                <tr>
+                    <th>Patient ID</th>
+                    <th>Insurance ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Birthdate</th>
+                    <th>Phone Number</th>
+                    <th>Email</th>
+                    <th>Street Name</th>
+                    <th>City</th>
+                    <th>Zip Code</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each data}}
+                <tr data-value="{{this.id_patient}}">
+                    <td>{{this.id_patient}}</td>
+                    <td data-insuranceid="{{this.id_insurance}}">
+                        {{#if this.id_insurance}}
+                            {{this.id_insurance}}
+                        {{else}}
+                            N/A
+                        {{/if}}
+                    </td>
+                    <td>{{this.first_name}}</td>
+                    <td>{{this.last_name}}</td>
+                    <td><span class="birthdate">{{this.birthdate}}</span></td>
+                    <td>{{this.phone_number}}</td>
+                    <td data-email="{{this.email}}">
+                        {{#if this.email}}
+                            {{this.email}}
+                        {{else}}
+                            N/A
+                        {{/if}}
+                    </td>
+                    <td>{{this.street_name}}</td>
+                    <td>{{this.city}}</td>
+                    <td>{{this.zip_code}}</td>
+                    <td><button onclick="deletePatient({{this.id_patient}})">Delete</button></td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+    <!-- Delete Patient -->
+    <script src="./js/delete_patient.js"></script>
+    <p>&nbsp;</p>
+
+    <!-- Form for searching patients by last name -->
+    <div id="search" style="display:block;">
+        <form method="GET" id="searchPatientForm">
+            <legend>
+                <strong>Search Patients</strong>
+            </legend>
+            <p>
+                Search any last name or letter and the matching data will be displayed.
+            </p>
+            <!-- Input field for entering last name -->
+            <label for="input-last-name">Search Last Name</label>
+            <input type="text" name="last_name_search" id="input-last-name-html-search">
+            
+            <!-- Submit button for performing the search -->
+            <input class="button" type="submit">
+            
+            <!-- Button to reset the search form -->
+            <a href='/patients.hbs'><button>Reset</button></a>
+        </form>
+    </div>
+    <p>&nbsp;</p>
+    
+    <!-- Form for adding a new patient with insurance -->
+    <div id="insert" style="display:block;">
+        <form id="add-patient-insurance" method="POST" action="/add-patient-insurance">
+            <legend>
+                <strong>Add Patient</strong>
+            </legend>
+            <p>
+                Add a new patient chart to our system below.
+                To add a new patient, first add their insurance shown below. If
+                the patient does not have insurance, or we do not accept their
+                insurance, ignore the 'Add Insurance for the New Patient' 
+                section and instead select the 'Self Pay' option in the Insurance ID
+                dropdown menu.
+            </p>
+            
+            <!-- Add Insurance for the New Patient section -->
+            <legend>
+                <h5>Add Insurance for the New Patient:</h5>
+            </legend>
+            <fieldset class="formfields">
+                <!-- Input fields for adding insurance -->
+                <div id="add-insurance-fields" style="display:block;">
+                    <label>Organization Name</label>
+                    <select name="insurance-name" id="insurance-name">
+                        <option value="selectOrgName">Select an Insurance Company</option>
+                        <option value="Regence">Regence</option>
+                        <option value="UnitedHealthcare">UnitedHealthcare</option>
+                        <option value="Aetna">Aetna</option>
+                        <option value="Kaiser Permanente">Kaiser Permanente</option>
+                    </select>
+                    <label>Member ID</label>
+                    <input type="text" name="member-ID">
+                    <label>Group Number</label>
+                    <input type="text" name="add-group-number">
+                    <input type="submit" id="add-insurance-submit" value="Add Insurance">
+                    <div id="error-message-update" style="display: none; color: red;"></div>
+                </div>
+                
+                <p>&nbsp;</p>
+                <h4>Insurances that are not associated with a patient:</h4>
+                <p>This table only displays unassociated insurances. To view or manipulate 
+                    the full list of insurances, please visit the Insurance page by clicking 
+                    on the 'Insurance' tab.
+                </p>
+                
+                <!-- Table to display unassociated insurances -->
+                <table id="insuranceTable">
+                    <!--headers-->
+                    <thead>
+                        <tr>
+                            <th>Insurance ID</th>
+                            <th>Organization Name</th>
+                            <th>Member ID</th>
+                            <th>Group Number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each insurance}}
+                        <tr>
+                            <td>{{this.id_insurance}}</td>
+                            <td>{{this.org_name}}</td>
+                            <td>{{this.member_id}}</td>
+                            <td>{{this.group_number}}</td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+                <p>&nbsp;</p>
+            </fieldset>
+        </form>
+        
+        <!-- Form for adding the new patient -->
+        <form id="add-patient-form" method="POST" action="/add-patient">
+            <legend>
+                <h5>Add the New Patient:</h5>
+            </legend>
+            <fieldset class="formfields">
+                <!-- Input fields for adding patient information -->
+                <label>Insurance ID</label>
+                <select name="input-patient-insurance" id="input-patient-insurance">
+                    <option value="select-insurance-for-add">Select an Insurance ID</option>
+                    {{#each insurance}}
+                        <option value="{{this.id_insurance}}">{{this.id_insurance}} - {{this.org_name}}</option>
+                    {{/each}}
+                    <option value="self-pay">Self Pay</option>
+                </select>
+                <label>First Name</label>
+                <input type="text" name="input-patient-first-name" id="input-patient-first-name">
+                <label>Last Name</label>
+                <input type="text" name="input-patient-last-name" id="input-patient-last-name">
+                <label>Birthdate</label>
+                <input type="date" name="input-patient-birthdate" id="input-patient-birthdate">
+                <label>Phone</label>
+                <input type="tel" name="input-patient-phone" id="input-patient-phone">
+                <label>Email</label>
+                <input type="text" name="input-patient-email" id="input-patient-email">
+                <label>Street Name</label>
+                <input type="text" name="input-patient-street-name" id="input-patient-street-name">
+                <label>City</label>
+                <input type="text"  name="input-patient-city" id="input-patient-city">
+                <label>Zip Code</label>
+                <input type="text" name="input-patient-zip" id="input-patient-zip">
+            </fieldset>
+            
+            <!-- Submit button to add the new patient -->
+            <input class="button" type="submit" id="savePatient" value="Save Patient">
+            <div id="error-message-patient" style="display: none; color: red;"></div>
+        </form>
+    </div>
+    <p>&nbsp;</p>
+
+    <!-- Form for updating patient information -->
+    <div id="update" style="display:block;">
+        <form id="update-patient-form-ajax">
+            <legend>
+                <strong>Edit Patient</strong>
+            </legend>
+            <p>
+                Update a current patient's information below. You will not be able to edit 
+                the Current Insurance ID's text box, but you can manipulate it via selecting 
+                an option in New Insurance ID. If you wish to edit insurance information, 
+                please visit the 'Insurance' page.
+            </p>
+            <fieldset class="formfields">
+                <!-- Dropdown menu for selecting a patient -->
+                <label for="input-patient">Patient ID</label>
+                <select name="input-patient" id="mySelect">
+                    <option value="selectPatient">Select a patient</option>
+                    {{#each data}}
+                        <option value="{{this.id_patient}}" data-insuranceid="{{this.id_insurance}}" data-firstname="{{this.first_name}}" data-lastname="{{this.last_name}}" data-birthdate="{{this.birthdate}}" data-phone="{{this.phone_number}}" data-email="{{this.email}}" data-street="{{this.street_name}}" data-city="{{this.city}}" data-zip="{{this.zip_code}}">{{this.id_patient}} - {{this.last_name}}, {{this.first_name}}</option>
+                    {{/each}}
+                </select>
+                <!-- Input field for displaying current insurance ID -->
+                <label for="id_insurance">Current Insurance ID</label>
+                <input type="text" name="current_insurance" id="id_insurance" style="background-color: rgb(244, 244, 248);" readonly>
+                <!-- Dropdown menu for selecting a new insurance ID -->
+                <label for="insurance_id">New Insurance ID</label>
+                <select name="input-patient-insurance-update" id="input-patient-insurance-update" onchange="updateCurrentInsurance()">
+                    <option value="select-insurance-for-update">Select an Insurance ID</option>
+                    {{#each insurance}}
+                        <option value="{{this.id_insurance}}">{{this.id_insurance}} - {{this.org_name}}</option>
+                    {{/each}}
+                    <option value="N/A">Self Pay</option>
+                </select>
+                <!-- Input fields for updating patient details -->
+                <label for="first_name">First Name</label>
+                <input type="text" name="first_name" id="input-first-name-update">
+                <label for="last_name">Last Name</label>
+                <input type="text" name="last_name" id="input-last-name-update">
+                <label for="birthdate">Birthdate</label>
+                <input type="date" name="birthdate" id="input-birthdate-update">
+                <label for="phone">Phone</label>
+                <input type="tel" name="phone" id="input-phone-update">
+                <label for="email">Email</label>
+                <input type="text" name="email" id="input-email-update">
+                <label for="street_name">Street Name</label>
+                <input type="text" name="street_name" id="input-street-name-update">
+                <label for="city">City</label>
+                <input type="text" name="city" id="input-city-update">
+                <label for="zip_code">Zip Code</label>
+                <input type="text" name="zip_code" id="input-zip-code-update">
+            </fieldset>
+            <!-- Submit button for updating patient information -->
+            <input class="button" type="submit" id="updatePatient" value="Update Patient">
+            <!-- Error message display area -->
+            <div id="error-message-update-form" style="display: none; color: red;"></div>
+        </form>
+        <!-- JavaScript file for updating patient details -->
+        <script src="./js/update_patient.js"></script>
+    </div>
+    <p>&nbsp;</p>
+    
+    <!-- Code Citation  -->
+    <!-- Date: 8/14/23  -->
+    <!-- Taken from mdn web docs  -->
+    <!-- Source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString -->
+    
+    <!-- Format date and update displayed value --> 
+    <script>
+    const birthdateElements = document.querySelectorAll('.birthdate');
+    birthdateElements.forEach(element => {
+        const originalDate = element.textContent;
+        const formattedDate = new Date(originalDate).toLocaleDateString('en-US');
+        element.textContent = formattedDate;
+    });
+    </script>
+
+    <!-- Script for updating patient information -->
+    <script>
+    // Function to autofill based on dropdown menu selection for Patient ID
+    function updateCurrentInsurance() {
+        var selectedInsuranceId = document.getElementById('input-patient-insurance-update').value;
+        document.getElementById('id_insurance').value = selectedInsuranceId;
+    }
+
+    // Event listener for changes in the New Insurance ID dropdown menu
+    document.getElementById('input-patient-insurance-update').addEventListener('change', updateCurrentInsurance);
+
+    // Event listener for changes in the Patient ID dropdown menu
+    document.getElementById('mySelect').addEventListener('change', function(event) {
+        var selectedOption = event.target.options[event.target.selectedIndex];
+
+        if (selectedOption.value !== 'selectPatient') {
+            // Extract data attributes from the selected option
+            var currentInsuranceId = selectedOption.getAttribute('data-insuranceid');
+            var firstName = selectedOption.getAttribute('data-firstname');
+            var lastName = selectedOption.getAttribute('data-lastname');
+            var birthdate = selectedOption.getAttribute('data-birthdate');
+            var phone = selectedOption.getAttribute('data-phone');
+            var email = selectedOption.getAttribute('data-email');
+            var street = selectedOption.getAttribute('data-street');
+            var city = selectedOption.getAttribute('data-city');
+            var zip = selectedOption.getAttribute('data-zip');
+
+            // Populate form fields with extracted data
+            var newInsuranceIdSelect = document.getElementById('input-patient-insurance-update');
+            newInsuranceIdSelect.value = currentInsuranceId;
+
+            var insuranceIdField = document.getElementById('id_insurance');
+            insuranceIdField.value = currentInsuranceId !== 'N/A' ? currentInsuranceId : 'N/A';
+
+            document.getElementById('input-first-name-update').value = firstName;
+            document.getElementById('input-last-name-update').value = lastName;
+            document.getElementById('input-birthdate-update').value = birthdate ? new Date(birthdate).toISOString().split('T')[0] : '';
+            document.getElementById('input-phone-update').value = phone;
+            document.getElementById('input-email-update').value = email;
+            document.getElementById('input-street-name-update').value = street;
+            document.getElementById('input-city-update').value = city;
+            document.getElementById('input-zip-code-update').value = zip;
+        } else {
+            // Clear form fields if "Select a patient" is chosen
+            document.getElementById('id_insurance').value = '';
+            document.getElementById('input-first-name-update').value = '';
+            document.getElementById('input-last-name-update').value = '';
+            document.getElementById('input-birthdate-update').value = '';
+            document.getElementById('input-phone-update').value = '';
+            document.getElementById('input-email-update').value = '';
+            document.getElementById('input-street-name-update').value = '';
+            document.getElementById('input-city-update').value = '';
+            document.getElementById('input-zip-code-update').value = '';
+        }
+    });
+    </script>
+
+    <!-- Script for validating insurance information -->
+    <script>
+    // Validation for insurance form submission
+    document.getElementById('add-patient-insurance').addEventListener('submit', function(event) {
+        var orgName = document.getElementById('insurance-name').value;
+        var memberID = document.getElementsByName('member-ID')[0].value;
+
+        // Check if the organization name is selected and member ID is provided
+        if (orgName === 'selectOrgName' || !memberID) {
+            event.preventDefault(); // Prevent form submission
+            var errorMessage = "Please select an organization name and provide a member ID.";
+            document.getElementById('error-message-update').textContent = errorMessage;
+            document.getElementById('error-message-update').style.display = 'inline'; // Display error message below the button
+        }
+    });
+    </script>
+
+    <!-- Code to display error message for Add Patient - original work -->
+    <script>
+    // Add event listener to the "Save Patient" button for Add Patient form
+    document.getElementById('savePatient').addEventListener('click', function(event) {
+        var insuranceId = document.getElementById('input-patient-insurance').value;
+        var firstName = document.getElementById('input-patient-first-name').value;
+        var lastName = document.getElementById('input-patient-last-name').value;
+        var birthdate = document.getElementById('input-patient-birthdate').value;
+        var phone = document.getElementById('input-patient-phone').value;
+        var streetName = document.getElementById('input-patient-street-name').value;
+        var city = document.getElementById('input-patient-city').value;
+        var zipCode = document.getElementById('input-patient-zip').value;
+
+        // Check if any of the required fields are empty
+        if (!insuranceId || !firstName || !lastName || !birthdate || !phone || !streetName || !city || !zipCode) {
+            event.preventDefault(); // Prevent form submission
+            var errorMessage = "All fields are required except Email.";
+            document.getElementById('error-message-patient').textContent = errorMessage;
+            document.getElementById('error-message-patient').style.display = 'inline'; // Display error message
+        }
+    });
+    </script>
+
+    <!-- Code to display error message for Update Patient - original work -->
+    <script>
+        // Add event listener to the "Update Patient" button for Update Patient form
+        document.getElementById('updatePatient').addEventListener('click', function(event) {
+            var insuranceId = document.getElementById('input-patient-insurance-update').value;
+            var firstName = document.getElementById('input-first-name-update').value;
+            var lastName = document.getElementById('input-last-name-update').value;
+            var birthdate = document.getElementById('input-birthdate-update').value;
+            var phone = document.getElementById('input-phone-update').value;
+            var streetName = document.getElementById('input-street-name-update').value;
+            var city = document.getElementById('input-city-update').value;
+            var zipCode = document.getElementById('input-zip-code-update').value;
+
+            // Check if any of the required fields are empty (excluding insuranceId)
+            if (!firstName || !lastName || !birthdate || !phone || !streetName || !city || !zipCode) {
+                event.preventDefault(); // Prevent form submission
+                var errorMessage = "All fields are required except Email.";
+                document.getElementById('error-message-update-form').textContent = errorMessage;
+                document.getElementById('error-message-update-form').style.display = 'inline'; // Display error message
+            }
+        });
+    </script>
+</body>
+</html>

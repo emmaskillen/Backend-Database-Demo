@@ -1,0 +1,390 @@
+<!-- 
+
+Brynn DeVaan and Emma Skillen
+
+CS 340
+
+Code Citation:
+Date: 8/14/23
+Cited from nodejs-starter-app from GitHub osu-cs340-ecampus
+https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main/Step%205%20-%20Adding%20New%20Data
+With the exception of original work on adding confirmation and error messages in the script.
+And with the exception of using mdn web docs as a reference towards displaying dates in the script.
+
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/mystyle.css">
+    <title>Document</title>
+</head>
+<body>
+    <nav>
+        <a href=/>Home</a>
+        <a href="patients.hbs">Patients</a>
+        <a href="staff.hbs">Staff</a>
+        <a href="insurance.hbs">Insurance</a>
+        <a href="codes.hbs">CPT Codes</a>
+        <a href="appointment.hbs">Appointments</a>
+        <a href="appointment-codes.hbs">Appointment Codes</a>
+    </nav>
+    <h1>Appointments</h1>
+    <!--Main Display Table-->
+    <div id="select" style="display:block;">
+        <p>
+            This is a record of all existing appointments. This is useful for both
+            scheduling and billing purposes. Each patient and staff record is tied to an appointment
+            and the details of those appointments can be updated below. 
+        </p>
+    <!-- Appointment Table -->
+    <!-- Code Citation  -->
+    <!-- Date: 7/31/23  -->
+    <!-- Taken from nodejs-starter-app from GitHub  -->
+    <!-- Source: https://github.com/osu-cs340-ecampus/nodejs-starter-app/blob/main/Step%204%20-%20Dynamically%20Displaying%20Data/README.md -->
+    <table id="appointmentTable">
+        <!-- Table headers -->
+        <thead>
+            <tr>
+                <th>Appointment ID</th>
+                <th>Patient ID</th>
+                <th>Staff ID</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Visit Purpose</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <!-- Table body -->
+        <tbody>
+            {{#each data}}
+            <tr>
+                <td>{{this.id_appointment}}</td>
+                <td>{{this.id_patient}}</td>
+                <td>{{this.id_staff}}</td>
+                <td>{{formatDate this.appointment_date}}</td>
+                <td>{{this.appointment_time}}</td>
+                <td>{{this.visit_purpose}}</td>
+                <td><button onclick="deleteAppointment({{this.id_appointment}})">Delete</button></td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    </div>
+
+    <!-- Script to handle appointment deletion -->
+    <script src="./js/delete_appointment.js"></script>
+    <p>&nbsp;</p>
+        
+    <!-- Searching Appointments -->
+    <div id="search" style="display:block;">
+        <!-- Form for searching appointments by date -->
+        <form id="search-appointment-html" method='GET' action="/appointment.hbs">
+            <legend>
+                <strong>Search Appointments</strong>
+            </legend>
+            <p>
+                Search for appointments by date.
+            </p>
+            <!-- Input for searching by date -->
+            <label for="input-date">Search By Date</label>
+            <input type="date" name="input_search_date" id="input-date-html-search">
+            
+            <!-- Submit button for searching -->
+            <input class="button" type="submit">
+            
+            <!-- Reset button to clear search filters -->
+            <a href='/appointment.hbs'><button>Reset</button></a>
+        </form>
+    </div>
+    <p>&nbsp;</p>
+
+    <!-- Adding Appointment -->
+    <div id="insert" style="display:block;">
+        <!-- Form for adding a new appointment -->
+        <form id="add-appointment-form" method="POST" action="/add-appointment-form">
+            <legend>
+                <strong>Create Appointment</strong>
+            </legend>
+            <p>
+                Add a new appointment here. Each appointment requires
+                a patient and provider ID. Patients must be registered before 
+                an appointment can be made. 
+            </p>    
+            <!-- Form fields -->
+            <fieldset class="formfields">
+                <!-- Select patient ID -->
+                <label>Patient ID</label>
+                <select name="patientID" id="input-patient-appt-ajax">
+                    <option value="">Select Patient</option>
+                    {{#each patients}}
+                    <option value="{{this.id_patient}}">
+                        {{this.first_name}} {{this.last_name}} - DOB: {{formatDate this.birthdate}}
+                    </option>
+                    {{/each}}
+                </select>
+                
+                <!-- Select staff ID (provider) -->
+                <label>Staff ID</label>
+                <select name="staffID" id="input-patient-appt-ajax">
+                    <option value="">Select Provider</option>
+                    {{#each staff}}
+                    <option value="{{this.id_staff}}">Dr. {{this.first_name}} {{this.last_name}}</option>
+                    {{/each}}
+                </select>
+                
+                <!-- Input for appointment date -->
+                <label>Date</label>
+                <input type="date" name="apptDate">
+                
+                <!-- Input for appointment time -->
+                <label>Time</label>
+                <input type="time" name="apptTime">
+                
+                <!-- Input for purpose of visit -->
+                <label>Purpose of Visit</label>
+                <input type="text" name="purpose">
+            </fieldset>
+            
+            <!-- Submit button -->
+            <input class="button" type="submit" id="createAppt" value="Save Appointment">
+        </form>
+    </div>
+    <p>&nbsp;</p>
+
+    <!-- Updating Appointment -->
+    <div id="update" style="display:block;">
+        <!-- Form for updating appointment information -->
+        <form id="update-appointment-form-ajax">
+            <legend>
+                <strong>Edit Appointment</strong>
+            </legend>
+            <p>
+                Update the selected appointment below. Make sure to hit <strong>Update Appointment</strong>
+                in order to save the updates. 
+            </p>
+            <!-- Form fields -->
+            <fieldset class="formfields">
+                <!-- Select appointment ID -->
+                <label>Appointment ID</label>
+                <select name="select-appointmentID" id="mySelectAppointment">
+                    <option value="selectAppointment">Select an Appointment</option>
+                    {{#each data}}
+                    <option value="{{this.id_appointment}}" data-id-patient="{{this.id_patient}}" data-id-staff="{{this.id_staff}}" data-date="{{this.appointment_date}}"
+                        data-time="{{this.appointment_time}}" data-purpose="{{this.visit_purpose}}">
+                        {{this.id_appointment}} - Date: {{formatDate this.appointment_date}} at {{this.appointment_time}}
+                    </option>
+                    {{/each}}
+                </select>
+                
+                <!-- Display current patient ID (read-only) -->
+                <label for="id_patient">Current Patient ID</label>
+                <input type="text" name="current_patient" id="id_patient" style="background-color: rgb(244, 244, 248);" readonly>
+                
+                <!-- Select new patient ID -->
+                <label>Patient ID</label>
+                <select name="input-patientID" id="input-patientID-update">
+                    <option value="SelectNewPatient">Select New Patient</option>
+                    {{#each patients}}
+                    <option value="{{this.id_patient}}">
+                        {{this.first_name}} {{this.last_name}} - DOB: {{formatDate this.birthdate}}
+                    </option>
+                    {{/each}}
+                </select>
+                
+                <!-- Display current staff ID (read-only) -->
+                <label for="id_staff">Current Staff ID</label>
+                <input type="text" name="current_staff" id="id_staff" style="background-color: rgb(244, 244, 248);" readonly>
+                
+                <!-- Select new staff ID -->
+                <label>Staff ID</label>
+                <select name="input-staffID" id="input-staffID-update">
+                    <option value="selectApptStaff">Select New Provider</option>
+                    {{#each staff}}
+                    <option value="{{this.id_staff}}">Dr. {{this.first_name}} {{this.last_name}}</option>
+                    {{/each}}
+                </select>
+                
+                <!-- Input for appointment date -->
+                <label>Date</label>
+                <input type="date" name="input-apptDate" id="input-apptDate-update">
+                
+                <!-- Input for appointment time -->
+                <label>Time</label>
+                <input type="time" name="input-apptTime" id="input-apptTime-update">
+                
+                <!-- Input for purpose of visit -->
+                <label>Purpose of Visit</label>
+                <input type="text" name="input-purpose" id="input-purpose-update">
+            </fieldset>
+            
+            <!-- Submit button -->
+            <input class="button" type="submit" id="createAppt" value="Update Appointment">
+        </form>
+    </div>
+
+    <!-- Script to handle the form submission -->
+    <script src="./js/update_appointment.js"></script>
+    <p>&nbsp;</p>
+
+    <!-- Code to display error message for Add Appointment - original work -->
+    <script>
+    // Attach an event listener to the form submission
+    document.getElementById('addAppointment').addEventListener('submit', function(event) {
+        // Retrieve input values
+        var patientID = document.getElementsByName('patientID')[0].value;
+        var staffID = document.getElementsByName('staffID')[0].value;
+        var date = document.getElementsByName('date')[0].value;
+        var time = document.getElementsByName('time')[0].value;
+        var purpose = document.getElementsByName('purpose')[0].value;
+
+        // Check if any of the required fields are empty
+        if (!patientID || !staffID || !date || !time || !purpose) {
+            event.preventDefault(); // Prevent form submission
+
+            // Display an error message
+            var errorMessage = "All fields are required.";
+            document.getElementById('error-message').textContent = errorMessage;
+            document.getElementById('error-message').style.display = 'inline'; // Display next to the button
+        }
+    });
+    </script>
+
+    <!-- Code to display error message for Add Appointment - original work -->
+    <script>
+    // Attach an event listener to the form submission
+    document.getElementById('addAppointment').addEventListener('submit', function(event) {
+        // Retrieve input values
+        var patientID = document.getElementsByName('patientID')[0].value;
+        var staffID = document.getElementsByName('staffID')[0].value;
+        var date = document.getElementsByName('date')[0].value;
+        var time = document.getElementsByName('time')[0].value;
+        var purpose = document.getElementsByName('purpose')[0].value;
+
+        // Check if any of the required fields are empty
+        if (!patientID || !staffID || !date || !time || !purpose) {
+            event.preventDefault(); // Prevent form submission
+            
+            // Prepare error message
+            var errorMessage = "All fields are required.";
+
+            // Display error message next to the button
+            var errorElement = document.getElementById('error-message');
+            errorElement.textContent = errorMessage;
+            errorElement.style.display = 'inline';
+        }
+    });
+    </script>
+
+    <script>
+    // Add event listener to the "Load Appointment" button
+    document.getElementById('loadAppointment').addEventListener('click', function(event) {
+        // Get the selected appointment ID from the input field
+        var appointmentID = document.getElementById('appointmentID').value;
+
+        // Check if a valid appointment is selected
+        if (appointmentID !== 'selectAppointment') {
+            // Fetch appointment details based on the selected appointment ID
+            fetch('/get-appointment/' + appointmentID)  // Update the endpoint to fetch appointment details
+                .then(response => response.json())
+                .then(data => {
+                    // Populate the form fields with the fetched data
+                    document.getElementsByName('patient_id')[0].value = data.id_patient;
+                    document.getElementsByName('staff_id')[0].value = data.id_staff;
+                    document.getElementsByName('appointment_date')[0].value = data.appointment_date;
+                    document.getElementsByName('appointment_time')[0].value = data.appointment_time;
+                    document.getElementsByName('purpose')[0].value = data.visit_purpose;
+                })
+                .catch(error => console.error('Error fetching appointment details:', error));
+        }
+    });
+    </script>
+
+    <script>
+    // Add event listener to the "Load Appointment" button
+    document.getElementById('loadAppointment').addEventListener('click', function(event) {
+        var appointmentID = document.getElementById('appointmentID').value;
+
+        if (appointmentID !== 'selectAppointment') {
+            // Fetch staff details based on the selected staff ID
+            fetch('/get-appointment/' + appointmentID)  // Update the endpoint to fetch staff details
+                .then(response => response.json())
+                .then(data => {
+                    // Populate the form fields with the fetched data
+                    document.getElementsByName('patient_id')[0].value = data.id_patient;
+                    document.getElementsByName('staff_id')[0].value = data.id_staff;
+                    document.getElementsByName('appointment_date')[0].value = data.appointment_date;
+                    document.getElementsByName('appointment_time')[0].value = data.appointment_time;
+                    document.getElementsByName('purpose')[0].value = data.visit_purpose;
+                })
+                .catch(error => console.error('Error fetching appointment details:', error));
+        }
+    });
+    </script>
+
+    <!-- Code Citation  -->
+    <!-- Date: 8/14/23  -->
+    <!-- Taken from mdn web docs  -->
+    <!-- Source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString -->
+    
+    <!-- Format date and update displayed value --> 
+    <script> 
+    const dateElements = document.querySelectorAll('.appointment_date');
+    dateElements.forEach(element => {
+        const originalDate = element.textContent;
+        const formattedDate = new Date(originalDate).toLocaleDateString('en-US');
+        element.textContent = formattedDate;
+    });
+    </script>
+
+    <!-- Function to autofill based off dropdown menu selection - original work --> 
+    <script>
+    document.getElementById('mySelectAppointment').addEventListener('change', function(event) {
+        var selectedOption = event.target.options[event.target.selectedIndex];
+
+        if (selectedOption.value !== 'selectAppointment') {
+
+            // save patient ID selected
+            var currentPatientId = selectedOption.getAttribute('data-id-patient');
+            var newPatientIdSelect = document.getElementById('input-patientID-update');
+            // save staff ID selected
+            var currentStaffId = selectedOption.getAttribute('data-id-staff');
+            var newStaffIdSelect = document.getElementById('input-staffID-update');
+
+            // Set the selected patient and staff based on the current selection
+            newPatientIdSelect.value = currentPatientId;
+            newStaffIdSelect.value = currentStaffId;
+
+            // get current id of patient and staff to display
+            document.getElementById('id_patient').value = currentPatientId; 
+            document.getElementById('id_staff').value = currentStaffId; 
+
+                // Extract data attributes from the selected option
+                var date = selectedOption.getAttribute('data-date');
+                var time = selectedOption.getAttribute('data-time');
+                var purpose = selectedOption.getAttribute('data-purpose');
+
+                // Populate the form fields with the extracted data
+                document.getElementById('input-apptDate-update').value = date ? new Date(date).toISOString().split('T')[0] : '';
+                document.getElementById('input-apptTime-update').value = time;
+                document.getElementById('input-purpose-update').value = purpose;
+            } else {
+                // Clear form fields if "Select an Appointment" is chosen
+                document.getElementById('id_patient').value = '';
+                document.getElementById('id_staff').value = '';
+                document.getElementById('input-apptDate-update').value = '';
+                document.getElementById('input-apptTime-update').value = '';
+                document.getElementById('input-purpose-update').value = '';
+            }
+    });
+    </script>
+</body>
+</html>
+
+
+
+
+
