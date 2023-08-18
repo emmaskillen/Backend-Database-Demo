@@ -18,7 +18,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.static('public'));
 
 // Set the port number at the top for easy future changes
-const PORT = 2565;                 
+const PORT = 443;                 
 
 // Import the database connector
 var db = require('./database/db-connector');
