@@ -90,7 +90,7 @@ app.get('/', function(req, res) {
 */
 
 // Display staff information and search form
-app.get('/staff.hbs', function(req, res) {
+app.get('/staff', function(req, res) {
     let query1;
 
     // If no last_name_search query parameter, perform basic SELECT
