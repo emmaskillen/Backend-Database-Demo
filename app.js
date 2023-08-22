@@ -19,6 +19,7 @@ app.use(express.static('public'));
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var path = require('path');
 
 // Set the port number at the top for easy future changes
 //const PORT = 443;                 
