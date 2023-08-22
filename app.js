@@ -17,8 +17,12 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static('public'));
 
+var routes = require('./routes/index');
+var users = require('./routes/users');
+app.use('/', routes);
+app.use('/users', users);
 // Set the port number at the top for easy future changes
-const PORT = 443;                 
+//const PORT = 443;                 
 
 // Import the database connector
 var db = require('./database/db-connector');
@@ -932,7 +936,10 @@ app.delete('/delete-appointment-code/:id', function(req, res) {
 =======================================================================================================================
 */
 
-app.listen(PORT, function(){ 
+/*app.listen(PORT, function(){ 
     // This is the basic syntax for what is called the 'listener' which receives incoming requests on the specified PORT.
     console.log('Express started on http://localhost:' + PORT + '; press Ctrl-C to terminate.')
 });
+*/
+
+module.exports = app;
