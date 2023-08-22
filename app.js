@@ -195,7 +195,7 @@ app.put('/put-staff-ajax', function(req, res, next) {
 */
 
 // Display insurance information and search features
-app.get('/insurance.hbs', function(req, res) {
+app.get('/insurance', function(req, res) {
     let query;
 
     // If no insurance_search query parameter, perform basic SELECT
@@ -303,7 +303,7 @@ app.delete('/delete-insurance/:id', function(req, res) {
 */
 
 // Display patient information and search form
-app.get('/patients.hbs', function(req, res) {
+app.get('/patients', function(req, res) {
     // Fetch insurance data
     const queryInsurance = "SELECT * FROM Insurances";
     
@@ -497,7 +497,7 @@ app.put('/put-patient-ajax', function(req, res, next) {
 */
 
 // display appointments 
-app.get('/appointment.hbs', function(req, res)
+app.get('/appointment', function(req, res)
 {
     // Declare Query 1
     let query1;
@@ -658,7 +658,7 @@ app.put('/put-appointment-ajax', function(req,res,next){
 */
 
 // Display and Search Codes Page
-app.get('/codes.hbs', function(req, res) {
+app.get('/codes', function(req, res) {
     let query;
 
     if (req.query.description_search === undefined) {
@@ -761,7 +761,7 @@ app.put('/put-code-ajax', function(req,res,next){
 */
 
 // display appointment-codes + search feature
-app.get('/appointment-codes.hbs', function(req, res)
+app.get('/appointment-codes', function(req, res)
 {
     // Declare Query 1
     let query1;
