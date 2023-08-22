@@ -19,8 +19,7 @@ app.use(express.static('public'));
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
-app.use('/', routes);
-app.use('/users', users);
+
 // Set the port number at the top for easy future changes
 //const PORT = 443;                 
 
@@ -34,6 +33,8 @@ app.engine('.hbs', engine({extname: ".hbs"}));
 app.set('view engine', '.hbs');                 
 app.use(express.static('public')); 
 
+app.use('/', routes);
+app.use('/users', users);
 /*
 =======================================================================================================================
 ---------- Handlebars -------------------------------------------------------------------------------------------------
