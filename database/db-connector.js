@@ -6,7 +6,8 @@ var mysql = require('mysql')
 // Create a 'connection pool' using the provided credentials
 var pool = mysql.createPool({
     connectionLimit : 10,
-    host            : 'localhost:3306',
+    host            : 'localhost',
+    port            : '3306',
     user            : 'skillene',
     password        : 'Mimi1918!',
     database        : 'skillene'
