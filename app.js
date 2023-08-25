@@ -104,7 +104,7 @@ app.get('/staff', function(req, res) {
     // Execute query and render staff.hbs template
     db.pool.query(query1, function(error, rows, fields) {
         let staff = rows;
-        res.render('staff.hbs', { data: staff });
+        res.render('staff', { data: staff });
     });
 });
 
@@ -124,7 +124,7 @@ app.post('/add-staff', function(req, res) {
             console.log(error);
             res.sendStatus(400);
         } else {
-            res.redirect('/staff.hbs'); // Redirect to staff page after successful insert
+            res.redirect('/staff'); // Redirect to staff page after successful insert
         }
     });
 });
@@ -209,7 +209,7 @@ app.get('/insurance', function(req, res) {
     // Execute query and render insurance.hbs template
     db.pool.query(query, function(error, rows, fields) {
         let insurances = rows;
-        res.render('insurance.hbs', { data: insurances });
+        res.render('insurance', { data: insurances });
     });
 });
 
@@ -240,7 +240,7 @@ app.post('/add-insurance-form', function(req, res) {
                     console.log(selectError);
                     res.sendStatus(400);
                 } else {
-                    res.redirect('/insurance.hbs');
+                    res.redirect('/insurance');
                 }
             });
         }
@@ -372,7 +372,7 @@ app.post('/add-patient', function(req, res) {
             console.log(error);
             res.sendStatus(400);
         } else {
-            res.redirect('/patients.hbs'); // Redirect back to the patients page after successful insert
+            res.redirect('/patients'); // Redirect back to the patients page after successful insert
         }
     });
 });
@@ -395,7 +395,7 @@ app.post('/add-patient-insurance', function(req, res) {
             console.log(error);
             res.sendStatus(400);
         } else {
-            res.redirect('/patients.hbs');
+            res.redirect('/patients');
         }
     });
 });
@@ -563,7 +563,7 @@ app.get('/appointment', function(req, res)
                             return Object.assign(member, {id_staff: staffmap[member.id_staff]})
                         })
 
-                        return res.render('appointment.hbs', {data: appointments, patients: patients, staff:staff});
+                        return res.render('appointment', {data: appointments, patients: patients, staff:staff});
                     })
             })
     })
@@ -590,7 +590,7 @@ app.post('/add-appointment-form', function(req, res){
         // presents it on the screen
         else
         {
-            res.redirect('/appointment.hbs');
+            res.redirect('/appointment');
         }
     })
 });
@@ -670,7 +670,7 @@ app.get('/codes', function(req, res) {
 
     db.pool.query(query, function(error, rows, fields) {
         let codes = rows;
-        res.render('codes.hbs', { data: codes });
+        res.render('codes', { data: codes });
     });
 });
 
@@ -695,7 +695,7 @@ app.post('/add-code-form', function(req, res){
         // presents it on the screen
         else
         {
-            res.redirect('/codes.hbs');
+            res.redirect('/codes');
         }
     })
 })
@@ -876,7 +876,7 @@ app.post('/add-appointment-code-form', function(req, res){
         // redirect
         else
         {
-            res.redirect('/appointment-codes.hbs');
+            res.redirect('/appointment-codes');
         }
     })
 })
