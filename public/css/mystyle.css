@@ -106,28 +106,34 @@ fieldset input{
     width: 100%;
     padding: 2em;
     color: white; 
-    align-items: center; 
+    text-align: center; 
 }
 
 ul {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
     gap: 1rem;
+	color: white;
+	list-style-type: none;
+	text-align: center;
+
   }
 
   ul > div {
-    background: antiquewhite;
+    background: #36454f;
     padding: 1rem;
   }
   
   ul > div:nth-child(4n - 2) {
-    background: lavenderblush;
+    background: #c3e3eb;
+	color: black;
   }
 
   ul > div:nth-child(4n - 1) {
-    background: azure;
+    background: #36454f;
   }
 
   ul > div:nth-child(4n) {
-    background: lavender;
+    background: #c3e3eb;
+	color: black;
   }
