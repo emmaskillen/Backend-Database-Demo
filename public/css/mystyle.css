@@ -106,4 +106,28 @@ fieldset input{
     width: 100%;
     padding: 2em;
     color: white; 
+    align-items: center; 
 }
+
+ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+    gap: 1rem;
+  }
+
+  ul > div {
+    background: antiquewhite;
+    padding: 1rem;
+  }
+  
+  ul > div:nth-child(4n - 2) {
+    background: lavenderblush;
+  }
+
+  ul > div:nth-child(4n - 1) {
+    background: azure;
+  }
+
+  ul > div:nth-child(4n) {
+    background: lavender;
+  }
