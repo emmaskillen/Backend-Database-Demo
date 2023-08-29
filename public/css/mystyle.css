@@ -112,14 +112,6 @@ fieldset input{
     text-align: center; 
 }
 
-article{
-    border-radius: 5px 5px 5px 5px;
-    border-color: var(--dark-pink);
-    background-color: var(--light-pink);
-    width: 50%; 
-    padding: 2.5%; 
-}
-
 ul {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
@@ -147,4 +139,13 @@ ul {
   ul > div:nth-child(4n) {
     background: #EAEAEA;
 	color: black;
+  }
+
+  .index-article{
+    margin: auto; 
+    border-radius: 5px 5px 5px 5px;
+    border-color: var(--dark-pink);
+    background-color: var(--light-pink);
+    width: 50%; 
+    padding: 2.5%; 
   }
