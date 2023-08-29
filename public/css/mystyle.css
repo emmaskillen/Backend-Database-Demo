@@ -9,8 +9,9 @@ Brynn DeVaan and Emma Skillen
     --mid-blue:#385170;
     --dark-blue: #142d4c; 
     --purple:#524a79;
-    --light-pink: #EAEAEA;
-    --dark-pink: #CB4154;
+    --light-green: #9CAF88;
+    --light-blue: #C6D8FF;
+	--turqoise: #40e0d0; 
 }
 
 main {
@@ -22,7 +23,7 @@ nav a {
     background-color:rgb(192, 216, 238);
     color: var(--dark-blue);
     border-radius: 5px 5px 5px 5px; 
-    font-size: 20px;
+    font-size: 25px;
     padding: 5px 10px 5px 10px;
     text-decoration: initial;
     text-align: center; 
@@ -115,39 +116,44 @@ fieldset input{
 }
 
 ul {
+	margin-top: 2%;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
     gap: 1rem;
-	color: white;
+	color: black;
 	list-style-type: none;
 	text-align: center;
+	border-radius: 2px 2px 2px 2px;
 
   }
 
   ul > div {
-    background: #CB4154;
+    background: var(--light-grey);
     padding: 1rem;
   }
   
-  ul > div:nth-child(4n - 2) {
-    background: #EAEAEA;
-	color: black;
+  ul > div:nth-child(odd) {
+    background: var(--turqoise);
   }
 
-  ul > div:nth-child(4n - 1) {
-    background: #CB4154;
+  ul > div:nth-child(even) {
+    background: var(--light-grey);
   }
 
-  ul > div:nth-child(4n) {
-    background: #EAEAEA;
-	color: black;
+  ul > div:nth-child(odd) {
+	background: var(--turqoise);
   }
 
   .index-article{
+	margin-top: 2%;
     margin: auto; 
     border-radius: 5px 5px 5px 5px;
-    border-color: var(--dark-pink);
-    background-color: var(--light-pink);
+    border-color: var(--light-green);
+    background-color: var(--light-grey);
     width: 65%; 
     padding: 2.5%; 
   }
+
+h2 {
+ margin-bottom: 2%;
+}
