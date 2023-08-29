@@ -9,6 +9,8 @@ Brynn DeVaan and Emma Skillen
     --mid-blue:#385170;
     --dark-blue: #142d4c; 
     --purple:#524a79;
+    --light-pink: #EAEAEA;
+    --dark-pink: #CB4154;
 }
 
 main {
@@ -88,7 +90,7 @@ footer {
     text-align: center;
     padding: 0.3%;
     border-radius: 5px 5px 5px 5px;
-    position: fixed; 
+    position: relative; 
 }
 
 fieldset, 
@@ -99,6 +101,7 @@ fieldset input{
   padding: 0.3%;
 }
 
+/* ----------INDEX PAGE--------------------------------- */
 .homeheader {
     background-color:var(--dark-blue);
     left: 0;
@@ -107,6 +110,14 @@ fieldset input{
     padding: 2em;
     color: white; 
     text-align: center; 
+}
+
+article{
+    border-radius: 5px 5px 5px 5px;
+    border-color: var(--dark-pink);
+    background-color: var(--light-pink);
+    width: 50%; 
+    padding: 2.5%; 
 }
 
 ul {
@@ -120,20 +131,20 @@ ul {
   }
 
   ul > div {
-    background: #36454f;
+    background: #CB4154;
     padding: 1rem;
   }
   
   ul > div:nth-child(4n - 2) {
-    background: #c3e3eb;
+    background: #EAEAEA;
 	color: black;
   }
 
   ul > div:nth-child(4n - 1) {
-    background: #36454f;
+    background: #CB4154;
   }
 
   ul > div:nth-child(4n) {
-    background: #c3e3eb;
+    background: #EAEAEA;
 	color: black;
   }
