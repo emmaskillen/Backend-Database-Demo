@@ -23,9 +23,11 @@ nav a {
     color: var(--dark-blue);
     border-radius: 5px 5px 5px 5px; 
     font-size: 20px;
-    margin:2px;
     padding: 5px 10px 5px 10px;
     text-decoration: initial;
+    text-align: center; 
+    margin: 0 auto;
+    
 }
 nav a:hover {
     background-color:rgb(29, 49, 87);
@@ -146,6 +148,6 @@ ul {
     border-radius: 5px 5px 5px 5px;
     border-color: var(--dark-pink);
     background-color: var(--light-pink);
-    width: 50%; 
+    width: 65%; 
     padding: 2.5%; 
   }
