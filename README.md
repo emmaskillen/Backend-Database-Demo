@@ -1,27 +1,29 @@
+# Overview: 
+
 Welcome to the Database Demo Website repository! This project showcases a simple web application that performs **CRUD** (Create, Read, Update, Delete) operations using Node.js, MySQL, JavaScript, Express, CSS, and HTML. The website is hosted on a **Plesk** server through **AWS** (Amazon Web Services). 
 
-# H2 Website: [https://emmademo.com]
+### Website: [https://emmademo.com]
 
-# H3 Technologies Used:
-1. Node.js: The server-side environment for running JavaScript code.
-2. MySQL: A relational database management system for data storage.
-3. JavaScript: Used for server-side logic and client-side interactions.
-4. Express: A Node.js web application framework for building APIs and web apps.
-5. CSS and HTML: Frontend technologies for styling and structuring the web pages.
-6. Plesk Server on AWS: The hosting environment for deploying the website.
+### Technologies Used:
+1. **Node.js**: The server-side environment for running JavaScript code.
+2. **MySQL**: A relational database management system for data storage.
+3. **JavaScript**: Used for server-side logic and client-side interactions.
+4. **Express**: A Node.js web application framework for building APIs and web apps.
+5. **CSS** and **HTML**: Frontend technologies for styling and structuring the web pages.
+6. **Plesk** Server on **AWS**: The hosting environment for deploying the website.
 
-# H3 Features:
-# H4 Create --
-* Create New Records: Add new data to the database by filling out forms on the website.
-# H4 Read --
-* Read Records: Retrieve and view existing data from the database.
-# H4 Update --
-* Update Records: Modify and update data entries stored in the database.
-# H4 Delete --
-* Delete Records: Remove data entries from the database.
+### Features:
+##### Create
+* Add new data to the database by filling out forms on the website.
+##### Read 
+* Retrieve and view existing data from the database.
+##### Update 
+* Modify and update data entries stored in the database.
+##### Delete
+* Remove data entries from the database.
 
 
-# H3 Background:
+### Background:
         A private doctor’s office is currently using two different systems to keep 
         track of billing and patient services. Due to its influx of newly admitted 
         patients, the average number of patients this clinic sees has recently 
@@ -51,8 +53,18 @@ Welcome to the Database Demo Website repository! This project showcases a simple
         same system makes it far easier for employees to get prior authorizations, 
         approvals, and advocate for their patients. 
 
+### Database:
+The database is hosted through on **phpMyAdmin** via **Plesk**
 
-# H3 Citations:
+Here is the schema of our database:
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="schema.png">
+ <source media="(prefers-color-scheme: light)" srcset="schema.png">
+ <img alt="YOUR-ALT-TEXT" src="YOUR-DEFAULT-IMAGE">
+</picture>
+
+
+### Citations:
 
 Dr. Curry and Prof. Safonte (August 2023) Citing source code (Version 16.13.0) [Source code] https://github.com/osu-cs340-ecampus/nodejs-starter-app/blob/main/README.md
 
