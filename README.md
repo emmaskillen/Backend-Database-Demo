@@ -60,7 +60,7 @@ Here is the schema of our database:
 <picture>
  <source media="(prefers-color-scheme: dark)" srcset="schema.png">
  <source media="(prefers-color-scheme: light)" srcset="schema.png">
- <img alt="YOUR-ALT-TEXT" src="YOUR-DEFAULT-IMAGE">
+ <img alt="YOUR-ALT-TEXT" src="schema.png">
 </picture>
 
 
